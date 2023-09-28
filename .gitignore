@@ -1,0 +1,5 @@
+.idea
+github.com/smartcat999/k8s-aggregated/apiserver.local.config
+github.com/smartcat999/k8s-aggregated/bin
+github.com/smartcat999/k8s-aggregated/config/certificates
+github.com/smartcat999/k8s-aggregated/config/*.yaml
