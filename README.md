@@ -14,7 +14,8 @@ go install sigs.k8s.io/controller-tools/cmd/controller-gen@v0.8.0 \
 && mkdir ./bin/ \
 && cp $GOPATH/bin/controller-gen ./bin/
 
-make controller-gen
+make controller-gen \
+&& make manifests
 
 # 部署服务
 apiserver-boot run in-cluster --image=2030047311/k8s-aggregated:0.0.1 --name=k8s-aggregated --namespace=default
