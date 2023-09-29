@@ -11,10 +11,17 @@ cd github.com/smartcat999/k8s-aggregated
 go mod tidy
 
 go install sigs.k8s.io/controller-tools/cmd/controller-gen@v0.8.0 \
+&& mkdir ./bin/ \
 && cp $GOPATH/bin/controller-gen ./bin/
 
 make controller-gen
 
 # 部署服务
 apiserver-boot run in-cluster --image=2030047311/k8s-aggregated:0.0.1 --name=k8s-aggregated --namespace=default
+```
+###### 1.3 异常
+####### 1.3.1 cgroups: cgroup mountpoint does not exist: unknown
+```shell
+mkdir /sys/fs/cgroup/systemd
+mount -t cgroup -o none,name=systemd cgroup /sys/fs/cgroup/systemd
 ```
