@@ -135,4 +135,4 @@ docker-build-all:
 
 build-local:
 	CGO_ENABLED=0 go build -a -o bin/apiserver cmd/apiserver/main.go
-    CGO_ENABLED=0 go build -a -o bin/controller-manager cmd/manager/main.go
+	CGO_ENABLED=0 go build -a -o bin/controller-manager cmd/manager/main.go
