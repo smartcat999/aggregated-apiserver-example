@@ -1,0 +1,79 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: k8s-iass-apiserver
+  namespace: default
+  labels:
+    api: k8s-iass
+    apiserver: "true"
+spec:
+  selector:
+    matchLabels:
+      api: k8s-iass
+      apiserver: "true"
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        api: k8s-iass
+        apiserver: "true"
+    spec:
+      containers:
+      - name: apiserver
+        image: 2030047311/k8s-iaas:0.0.1
+        volumeMounts:
+        - name: apiserver-certs
+          mountPath: /apiserver.local.config/certificates
+          readOnly: true
+        command:
+        - "./apiserver"
+        args:
+        - "--etcd-servers=http://etcd-svc:2379"
+        - "--tls-cert-file=/apiserver.local.config/certificates/tls.crt"
+        - "--tls-private-key-file=/apiserver.local.config/certificates/tls.key"
+        - "--audit-log-path=-"
+        - "--feature-gates=APIPriorityAndFairness=false"
+        - "--audit-log-maxage=0"
+        - "--audit-log-maxbackup=0"
+        resources:
+          requests:
+            cpu: 100m
+            memory: 20Mi
+          limits:
+            cpu: 100m
+            memory: 30Mi
+      volumes:
+      - name: apiserver-certs
+        secret:
+          secretName: k8s-iass
+---
+apiVersion: v1
+kind: Secret
+type: kubernetes.io/tls
+metadata:
+  name: k8s-iass
+  namespace: default
+  labels:
+    api: k8s-iass
+    apiserver: "true"
+data:
+  tls.crt: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURqekNDQW5lZ0F3SUJBZ0lJY2wwY0kwNXVOWjB3RFFZSktvWklodmNOQVFFTEJRQXdhREVMTUFrR0ExVUUKQmhNQ2RXNHhDekFKQmdOVkJBZ01Bbk4wTVFvd0NBWURWUVFIREFGc01Rb3dDQVlEVlFRS0RBRnZNUXN3Q1FZRApWUVFMREFKdmRURW5NQ1VHQTFVRUF3d2Vhemh6TFdsaGMzTXRZMlZ5ZEdsbWFXTmhkR1V0WVhWMGFHOXlhWFI1Ck1CNFhEVEl6TVRBeU56QTBNRGN6TkZvWERUTXpNVEF5TkRBME1EY3pORm93SHpFZE1Cc0dBMVVFQXhNVWF6aHoKTFdsaGMzTXVaR1ZtWVhWc2RDNXpkbU13Z2dFaU1BMEdDU3FHU0liM0RRRUJBUVVBQTRJQkR3QXdnZ0VLQW9JQgpBUUM3cW52d3RWWXNseERnSzRhb1FoNHZxclFQdGZWWG1NanBPQlpxMGg5U1B0YlZ5M3BqSkowQUpkSEJjKzN3CmIrTTNTbVdJUyt3ZkVxZ21sSzJHMHdUR1BTV2k0RUxUMkw5YlhWblJ5QWdTb2tlTktrTzNXL0dTd1E3d1hremsKdlptMjJvazJuTXR5YjBUUitudlNSckNsa05RcW5NQlZHY091MjJLYTh1aWZnWTMreUM3L0c4WnMxaTBMSmR0bQp1VEs3dTRhNWZERWRxanhSZGlhM0U5dHpVMEpOL2Fra0xLeG5lNktjRlMwbHcySkdEWDRLdENPbFI3eSs1N0ZsCldsZ0hRTG5ULzNVMUJIUUpOR3NYT1pJakJOMUdhTUQ0Mlk2L3lCMHQyeFUxa0ZrRURyTDB2M2NzaC9abmdhUk4KU1E1T0o1R1dSeXBlWVlxNVBIeEVPVkpuQWdNQkFBR2pnWVV3Z1lJd0RnWURWUjBQQVFIL0JBUURBZ1dnTUIwRwpBMVVkSlFRV01CUUdDQ3NHQVFVRkJ3TUJCZ2dyQmdFRkJRY0RBakFmQmdOVkhTTUVHREFXZ0JUY0hsTm1PbEF5CmN1bzlVMFhJWmdPeHdzNGtoREF3QmdOVkhSRUVLVEFuZ2dsc2IyTmhiR2h2YzNTQ0ZHczRjeTFwWVhOekxtUmwKWm1GMWJIUXVjM1pqaHdSL0FBQUJNQTBHQ1NxR1NJYjNEUUVCQ3dVQUE0SUJBUUJhay95cUpPR25ORGRrTThlQwpVWUhoNzFVMnRmempVUnBKUko2cjNMSU5Vb0FUOWY5N0x2Z216NXJTSTNINE0vNmNCMUVjL2RnaVh2NmhZNTl2ClYyZ000b1BFRW1rVEdYZS9TK2YzUCt5OEVSR2NiNUE0MlpmcFhrMmlpTUhobGpIOUZHSEtla1RHR2Nqb0JSUzcKRnB2Zmh0a2xQRzlibmhsYnhlTzA5N2pTT3ZkbEdHY2xnZnJVdzRlK2ZRQnRhUm9wYWhNTUVIbWd4U2MxaXhuMQo5ZHh4Nk9uMXZvK1o2MWdiakVWa1NyN1UxUmorSDV6WXBkMlFCK3VZOGNkYVBqVjFHQ2lqMmw2L1VJWjR4Wnh3CkpaUzdCNmVWRkZKVktpMmJoZmQvUUR4NjUrK3hxZHlYVnBCYk1kRll2aTBzQ0tHc1o4V3dQekRHR3dKTWNvUGkKU0RoQQotLS0tLUVORCBDRVJUSUZJQ0FURS0tLS0tCg==
+  tls.key: LS0tLS1CRUdJTiBSU0EgUFJJVkFURSBLRVktLS0tLQpNSUlFcEFJQkFBS0NBUUVBdTZwNzhMVldMSmNRNEN1R3FFSWVMNnEwRDdYMVY1akk2VGdXYXRJZlVqN1cxY3Q2Cll5U2RBQ1hSd1hQdDhHL2pOMHBsaUV2c0h4S29KcFN0aHRNRXhqMGxvdUJDMDlpL1cxMVowY2dJRXFKSGpTcEQKdDF2eGtzRU84RjVNNUwyWnR0cUpOcHpMY205RTBmcDcwa2F3cFpEVUtwekFWUm5EcnR0aW12TG9uNEdOL3NndQoveHZHYk5ZdEN5WGJacmt5dTd1R3VYd3hIYW84VVhZbXR4UGJjMU5DVGYycEpDeXNaM3VpbkJVdEpjTmlSZzErCkNyUWpwVWU4dnVleFpWcFlCMEM1MC85MU5RUjBDVFJyRnptU0l3VGRSbWpBK05tT3Y4Z2RMZHNWTlpCWkJBNnkKOUw5M0xJZjJaNEdrVFVrT1RpZVJsa2NxWG1HS3VUeDhSRGxTWndJREFRQUJBb0lCQUJJY21RdVpKTEQyLzJ6egpKbkxVdHI4WTlYblNzTlA4YmQ5OFIwV1Y4K25uSUtyUGtZZENBRmtFVFdNalFpS0RXZVY3SzZOazJHd0RTL0UxClJpNE43WmNJVGJxVGREK24yb2dCMFdwYXFOVExqcVpFSHZieVM3VkRKcUx5SnUrb2tNNUI5eDRyTWNOZ2s3N0UKTXZFUFczc1BLRHJZbUFOZWtqRXRBUzQ5SlZCSGNVN09OOW1FUkJUd29nZXpDT0V5cnJXWURSRk9tWm5QSUZYZQpObTlkN3A4Q3VKUGQ3SFF6R2VxeDFhbDB1aDNTZ0tMTm1NM21kQTdhenhianBUU3M1YnU5Ullad1BWdmFFQW55Ck5EN0RhaEp2dDliUmlRdWg5RlIwY29Dci8xYjkxSGlCQkVmMU1QMGhXK21DUysyOXoxK0dXMXA2M3N1eURGVUgKWWF3WWZEa0NnWUVBNFZsSWxLK3JTeHA1ajFFcUZKU0tZLzFzU0NmZHJZWDZsNXp2cEN2ZElsYTJnNm1yK2ZPMQppVEthR1I3MzdUUW9jMGl5REtLNXZ2Tk96dFpoRDNjbWZSelp0bER0bFoyY09QZnpvNEhBZzBsNllIaHRpcTU0CmZUTUNSWWhnMFBMQVZSRmk2azlKYkRJNk9XbkMxS3YvVVNCNGRaRWtFalZyOXFISS8xWThQVzBDZ1lFQTFURVMKczBzdlZaZGh6RXlKMFdwM0JIdHFTNEdRZVNJelFvNGlNOHc5dWNMOUFsOC81ek5seFBNOTRvK1lZOUorOG4raQpjMmptQ1ZVTWV3M3ZWZko5R05za3RNSysxQTEwSW5WcXlNSktybDEwaWc3M3h2cTV5aTFYNm5aT0J4clJLNlBFClVlVlBlUmhuQ0hET0xHK2krdTIrMjkvNC9XeU94Y3A3QjBCalRxTUNnWUJ0VlhsT2twREVScHNWK3VZMHlBRUIKRkhMVjYybTFpQnlXTk5GY1VOL2dpanZSVTZBYURMRldXSlBGZm00QnkxMlkyWHR4Zi80bzlEbVhSeEllZzh2TAp4aFNuVFVxSVhjanZKdll4cllGdThWYUx1Y0pFRi9Sam9qMEc2VzAzMDUrWFpuRWNoODF5emtmTGxWR3ZCNmcvCmYwYVNuQkhwTjd3akZFbkdBTndIWFFLQmdRQ3ZQNnpBcUJCY0Nwb0JKL1d1cVJiM0gwQ01teEFaRTIwUnkrYi8KcjJnYU9OaGt4OG12RTRnWDgyQXV5cDJaaVNLRDB6bkdKemZaK2dqTmF2SVFNOHB6MFVrR01vUk5xbFdLTWYwNgoxTVF4TzIrZVFabWEvdVlVOVZzc3lGMXg1N0NFY0JYa3dGeXBEYzg4bUFaVGJ0Mko2aitYWFRDL21pcHZHdmd4ClNOT1pnd0tCZ1FEaEhOWEs0cURZUTY1VnRocDUzRHlKTThZYXlWSUFVLzNiUE0xTUxidXB2RENDOGR1OTN4YmoKaDlLczRHVndjZkx6VjdyMWdwdlU3MHQvejQvWlZjdld3NTJ3aFlJaHZxdldpTm1XdXlOMTRncjcxNlAxYjhxegp0NkcxWG5vbGREcGMyekJnTWQxUTlIbmFua1Z4Tk5UUXJVaW9EWWlpUTUxQWdQcXlac2k1eGc9PQotLS0tLUVORCBSU0EgUFJJVkFURSBLRVktLS0tLQo=
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: k8s-iass
+  namespace: default
+  labels:
+    api: k8s-iass
+    apiserver: "true"
+spec:
+  ports:
+  - port: 443
+    protocol: TCP
+    targetPort: 443
+  selector:
+    api: k8s-iass
+    apiserver: "true"
