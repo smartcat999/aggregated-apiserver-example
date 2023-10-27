@@ -21,7 +21,7 @@ make controller-gen \
 apiserver-boot run in-cluster --image=2030047311/k8s-iaas:0.0.1 --name=k8s-iaas --namespace=default
 
 ```
-##### 1.3 本地运行
+###### 1.3 本地运行
 ```shell
 # 设置GOPATH
 export GOPATH=`pwd`/../
