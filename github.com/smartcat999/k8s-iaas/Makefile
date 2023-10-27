@@ -132,3 +132,7 @@ endef
 docker-build-all:
 	docker build -t ${IMG} -f Dockerfile-all  . \
     && docker push ${IMG}
+
+build-local:
+	CGO_ENABLED=0 go build -a -o bin/apiserver cmd/apiserver/main.go
+    CGO_ENABLED=0 go build -a -o bin/controller-manager cmd/manager/main.go

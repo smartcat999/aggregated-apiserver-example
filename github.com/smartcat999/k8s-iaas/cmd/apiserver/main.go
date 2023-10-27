@@ -30,11 +30,15 @@ func main() {
 	fg := flag.NewFlagSet("k8s-iaas", flag.PanicOnError)
 	klog.InitFlags(fg)
 	fg.Set("v", "4")
-	err := builder.APIServer.
+	command, err := builder.APIServer.
 		// +kubebuilder:scaffold:resource-register
 		WithResourceAndHandler(&dbv1alpha1.Instance{}, handler.ExampleHandlerProvider).
 		WithoutEtcd().
-		Execute()
+		Build()
+	if err != nil {
+		klog.Fatal(err)
+	}
+	err = command.Execute()
 	if err != nil {
 		klog.Fatal(err)
 	}

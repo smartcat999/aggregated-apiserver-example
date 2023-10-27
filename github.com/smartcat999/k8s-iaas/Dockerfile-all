@@ -1,4 +1,4 @@
-FROM golang:1.17 as builder
+FROM golang:1.18 as builder
 
 ENV GOPROXY=https://goproxy.cn,direct
 
@@ -10,13 +10,13 @@ COPY . .
 RUN go mod download
 
 # Build
-RUN CGO_ENABLED=0 go build -a -o apiserver cmd/apiserver/main.go
-RUN CGO_ENABLED=0 go build -a -o controller-manager cmd/manager/main.go
+RUN CGO_ENABLED=0 go build -a -o bin/apiserver cmd/apiserver/main.go
+RUN CGO_ENABLED=0 go build -a -o bin/controller-manager cmd/manager/main.go
 
 FROM alpine:3.16
 
-COPY --from=builder /workspace/apiserver .
-COPY --from=builder /workspace/controller-manager .
+COPY --from=builder /workspace/bin/apiserver .
+COPY --from=builder /workspace/bin/controller-manager .
 
 RUN apk update
 RUN apk add ca-certificates
