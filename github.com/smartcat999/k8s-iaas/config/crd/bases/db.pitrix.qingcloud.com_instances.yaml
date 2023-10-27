@@ -1,0 +1,129 @@
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    controller-gen.kubebuilder.io/version: v0.8.0
+  creationTimestamp: null
+  name: instances.db.pitrix.qingcloud.com
+spec:
+  group: db.pitrix.qingcloud.com
+  names:
+    kind: Instance
+    listKind: InstanceList
+    plural: instances
+    singular: instance
+  scope: Namespaced
+  versions:
+  - name: v1alpha1
+    schema:
+      openAPIV3Schema:
+        description: Instance
+        properties:
+          apiVersion:
+            description: 'APIVersion defines the versioned schema of this representation
+              of an object. Servers should convert recognized schemas to the latest
+              internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
+            type: string
+          kind:
+            description: 'Kind is a string value representing the REST resource this
+              object represents. Servers may infer this from the endpoint the client
+              submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
+            type: string
+          metadata:
+            type: object
+          spec:
+            description: InstanceSpec defines the desired state of Instance
+            properties:
+              alarm_status:
+                type: string
+              cpu:
+                type: integer
+              cpu_topology:
+                type: string
+              create_time:
+                type: string
+              description:
+                type: string
+              device:
+                type: string
+              dns_aliases:
+                items:
+                  type: string
+                type: array
+              eip:
+                type: string
+              extra:
+                type: string
+              graphics_passwd:
+                type: string
+              graphics_protocol:
+                type: string
+              image:
+                type: string
+              instance_class:
+                type: integer
+              instance_id:
+                type: string
+              instance_name:
+                type: string
+              instance_type:
+                type: string
+              keypair_ids:
+                items:
+                  type: string
+                type: array
+              mem:
+                type: string
+              memory_current:
+                type: integer
+              repl:
+                type: string
+              security_group:
+                type: string
+              status:
+                type: string
+              status_time:
+                type: string
+              sub_code:
+                type: integer
+              tags:
+                items:
+                  type: string
+                type: array
+              transition_status:
+                type: string
+              vcpus_current:
+                type: integer
+              volume_ids:
+                items:
+                  type: string
+                type: array
+              volumes:
+                items:
+                  type: string
+                type: array
+              vxnets:
+                items:
+                  type: string
+                type: array
+              zone_id:
+                type: string
+            type: object
+          status:
+            description: InstanceStatus defines the observed state of Instance
+            properties:
+              resource_id:
+                type: string
+              status:
+                type: string
+            type: object
+        type: object
+    served: true
+    storage: true
+status:
+  acceptedNames:
+    kind: ""
+    plural: ""
+  conditions: []
+  storedVersions: []
