@@ -33,6 +33,7 @@ func main() {
 	err := builder.APIServer.
 		// +kubebuilder:scaffold:resource-register
 		WithResourceAndHandler(&dbv1alpha1.Instance{}, handler.ExampleHandlerProvider).
+		WithoutEtcd().
 		Execute()
 	if err != nil {
 		klog.Fatal(err)
